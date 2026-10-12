@@ -21,6 +21,11 @@ public class PlayerFilterStorage implements Storage<Player, Boolean> {
         if (!plugin.getConfiguration().getFilter().isEnabled()) {
             return false;
         }
+        var manager = plugin.getDataManager();
+        var cached = manager != null && manager.isEnabled() ? manager.getCached(source.getUniqueId()) : null;
+        if (cached != null && cached.filter != null) {
+            return cached.filter;
+        }
         var pdc = source.getPersistentDataContainer().get(key, PersistentDataType.BYTE);
         if (pdc == null) {
             return plugin.getConfiguration().getFilter().getDefault();
@@ -30,6 +35,11 @@ public class PlayerFilterStorage implements Storage<Player, Boolean> {
 
     @Override
     public void set(Player source, Boolean value) {
+        var manager = plugin.getDataManager();
+        if (manager != null && manager.isEnabled()) {
+            manager.setFilter(source.getUniqueId(), value);
+            return;
+        }
         source.getPersistentDataContainer().set(key, PersistentDataType.BYTE, value ? (byte) 1 : (byte) 0);
     }
 

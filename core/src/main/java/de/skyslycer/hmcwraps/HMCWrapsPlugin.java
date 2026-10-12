@@ -21,6 +21,7 @@ import de.skyslycer.hmcwraps.pool.ObjectPool;
 import de.skyslycer.hmcwraps.preview.PreviewManager;
 import de.skyslycer.hmcwraps.serialization.Config;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.storage.DataManager;
 import de.skyslycer.hmcwraps.storage.FavoriteWrapStorage;
 import de.skyslycer.hmcwraps.storage.PlayerFilterStorage;
 import de.skyslycer.hmcwraps.storage.Storage;
@@ -69,6 +70,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     private Config config;
     private MessageHandler messageHandler;
     private WrappedTask checkTask;
+    private DataManager dataManager;
     private FoliaLib foliaLib;
     private final Map<UUID, String> wrapGui = new HashMap<>();
 
@@ -173,6 +175,11 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         if (!loadMessages()) {
             return false;
         }
+        if (dataManager != null) {
+            dataManager.close();
+        }
+        dataManager = new DataManager(this, config.getDatabase());
+        Bukkit.getOnlinePlayers().forEach(player -> dataManager.loadAsync(player.getUniqueId()));
         integrationHandler.load();
         getPreviewManager().removeAll(true);
         getUpdateChecker().check();
@@ -182,6 +189,10 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
     @Override
     public void unload() {
+        if (dataManager != null) {
+            dataManager.close();
+            dataManager = null;
+        }
         integrationHandler.unload();
         getWrapsLoader().unload();
         if (checkTask != null) {
@@ -365,6 +376,10 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
 
     public Map<UUID, String> getWrapGui() {
         return wrapGui;
+    }
+
+    public DataManager getDataManager() {
+        return dataManager;
     }
 
     @Override

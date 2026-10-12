@@ -25,8 +25,16 @@ public class FavoriteWrapStorage implements Storage<Player, List<Wrap>> {
 
     @Override
     public List<Wrap> get(Player source) {
-        var pdc = source.getPersistentDataContainer().get(key, PersistentDataType.STRING);
+        String pdc = null;
+        var manager = plugin.getDataManager();
+        var cached = manager != null && manager.isEnabled() ? manager.getCached(source.getUniqueId()) : null;
+        if (cached != null) {
+            pdc = cached.favorites;
+        }
         if (pdc == null) {
+            pdc = source.getPersistentDataContainer().get(key, PersistentDataType.STRING);
+        }
+        if (pdc == null || pdc.isEmpty()) {
             return new ArrayList<>();
         }
         return Arrays.stream(pdc.split(SEPARATOR))
@@ -36,6 +44,11 @@ public class FavoriteWrapStorage implements Storage<Player, List<Wrap>> {
     @Override
     public void set(Player source, List<Wrap> value) {
         var newValue = String.join(SEPARATOR, value.stream().map(Wrap::getUuid).toList());
+        var manager = plugin.getDataManager();
+        if (manager != null && manager.isEnabled()) {
+            manager.setFavorites(source.getUniqueId(), newValue);
+            return;
+        }
         source.getPersistentDataContainer().set(key, PersistentDataType.STRING, newValue);
     }
 

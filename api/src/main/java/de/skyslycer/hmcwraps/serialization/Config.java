@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.serialization;
 
+import de.skyslycer.hmcwraps.serialization.database.DatabaseSettings;
 import de.skyslycer.hmcwraps.serialization.filter.FilterSettings;
 import de.skyslycer.hmcwraps.serialization.globaldisable.GlobalDisable;
 import de.skyslycer.hmcwraps.serialization.integration.PluginIntegrations;
@@ -25,6 +26,7 @@ public class Config {
     private PermissionSettings permissions;
     private PreviewSettings preview;
     private Toggleable favorites;
+    private DatabaseSettings database = new DatabaseSettings();
     private FilterSettings filter;
     private Inventory inventory;
     private PhysicalUnwrapper unwrapper;
@@ -92,6 +94,10 @@ public class Config {
 
     public Toggleable getFavorites() {
         return favorites;
+    }
+
+    public DatabaseSettings getDatabase() {
+        return database;
     }
 
     public FilterSettings getFilter() {
