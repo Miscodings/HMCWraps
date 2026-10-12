@@ -161,6 +161,19 @@ filter:
   # If the inventory should be filtered by default
   default: false
 
+# Where per-player data (favorites, filter toggle) is stored
+# Same layout as HMCCosmetics: you can point this at the same MySQL database, the plugin uses its own table (HMCWRAPSDATABASE)
+database:
+  # PDC (default, stored on the player, no database), SQLITE, MYSQL
+  # When switching from PDC, existing favorites/filter settings are migrated when a player next changes them
+  type: pdc
+  mysql:
+    database: "database"
+    password: "cherryBomb"
+    port: 3306
+    host: "localhost"
+    user: "username"
+
 # Settings for model id & color preservation
 preservation:
   model-id:

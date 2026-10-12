@@ -4,7 +4,9 @@ import de.skyslycer.hmcwraps.HMCWrapsPlugin;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerJoinListener implements Listener {
 
@@ -12,6 +14,22 @@ public class PlayerJoinListener implements Listener {
 
     public PlayerJoinListener(HMCWrapsPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onPreLogin(AsyncPlayerPreLoginEvent event) {
+        var manager = plugin.getDataManager();
+        if (manager != null) {
+            manager.load(event.getUniqueId());
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        var manager = plugin.getDataManager();
+        if (manager != null) {
+            manager.unload(event.getPlayer().getUniqueId());
+        }
     }
 
     @EventHandler
